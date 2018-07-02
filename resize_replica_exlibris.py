@@ -56,13 +56,19 @@ def replica_break(box_ip,local_credentials, remote_credentials, replica):
 	headers={'X-Remote-Authorization':hashed_auth}
 	return requests.delete(url=url,auth=local_credentials,headers=headers).json()
 
+def replica_create(old_replica):
+	hashed_auth='Basic ' + base64.b64encode(remote_credentials)
+	url='http://'+box_ip+'/api/rest/replicas/'
+	headers={'X-Remote-Authorization':hashed_auth, 'Content-Type':'application/json'}
+	return requests.post(url=url, auth=local_credentials, headers=headers, data = json.dumps(old_replica)).json()
+	
 def get_new_replica_json(old_replica):
 	new_replica={}
 	new_replica['local_cg_id']=old_replica['result']['local_cg_id']
 	new_replica['remote_cg_id']=old_replica['result']['remote_cg_id']
 	new_replica['entity_type']=old_replica['result']['entity_type']
 	new_replica['replication_type']=old_replica['result']['replication_type']
-	new_replica['rpo_type']=old_replica['result']['replication_type']
+	new_replica['rpo_type']=old_replica['result']['rpo_type']
 	new_replica['rpo_value']=old_replica['result']['rpo_value']
 	new_replica['link_id']=old_replica['result']['link_id']
 	new_replica['entity_pairs']=[]
