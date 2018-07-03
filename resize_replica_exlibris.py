@@ -3,8 +3,19 @@ from capacity import *
 import base64
 import requests
 import json
+from infinini import ibox_login, pass_decode
 
-#from infinini import 
+## Replcae the following with argparse
+source_box_name_or_fqdn='ibox1499'
+target_box_name_or_fqdn='ibox628'
+volume='XL_CG1'
+#
+def get_vol_cg(box,vol):
+	vol_object=box.volumes.find(name=vol)
+	if (vol_object):
+		retrun vol.get_field('cg_name')
+	else: 
+		return Null
 
 def get_cg_id(box,cg_name):
 	cg=box.cons_groups.find(name=cg_name).to_list()[0]
@@ -86,26 +97,28 @@ def get_new_replica_json(old_replica):
 		
 
 
-	
+def get_cg_replica(box,cg_id):
+	replica
 
 
 
 if __name__ == '__main__':
 	try:
-	#Init source and target_box
-		#cg_id=get_cg_id(box,cg_name)
-		#replica=get_cg_replica(box,cg_id)
-		#volumes_to_assign=get_volumes_to_assign(replica)
-		#vols=assign_vols_to_host(target_box,map_host,volumes_to_assign)
-		box_name='ibox1499'
-		auth=('iscsi','123456')
-		remote_auth='admin:123456'
-		box_object=InfiniBox(box_name,auth)
-		box_object.login()
-		box_replicas=box_object.replicas.to_list()
-		our_replica=box_object.replicas.get(id='90415')
-		result=replica_break(box_name,auth,remote_auth,our_replica)
-		print result
+		source_box=ibox_login(source_box_name_or_fqdn)
+		target_box=ibox_login(target_box_name_or_fqdn)
+		source_box_auth=pass_decode(source_box_name_or_fqdn)
+		target_box_auth=pass_decode(target_box_name_or_fqdn)
+		cg_name=get_vol_cg(source_box,volume)
+		if (! cg_name):
+			raise Exception("unable to get volume CG")
+		cg_id=get_cg_id(source_box,cg_name)
+		replica=get_cg_replica(box,cg_id)
+			raise Exception("Unable to get Consistency Group Replica")
+		volumes_to_assign=get_volumes_to_assign(replica)
+		vols=assign_vols_to_host(target_box,map_host,volumes_to_assign)
+		if (! vols):
+			raise Exception("Unable to assign volumes to mount host")
+
 		### Idan's part
 	except Exception as E:
 		print "Can't {}".format(E)
