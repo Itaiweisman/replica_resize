@@ -8,12 +8,19 @@ import json
 import pprint
 from infinini import ibox_login, pass_decode
 
-## Replcae the following with argparse
+## IDAN 
+##
+## Replcae the following with argparse. NOTE box passwords should be placed in a file called 
+## .<box_name>.sec 
+## it should contain
+## <user name> <hashed_password>
+## hashed password = (bash)# echo real_passowrd | base64
+
 source_box_name_or_fqdn='ibox1499'
 target_box_name_or_fqdn='ibox628'
 map_host='kuku'
 volume='XL1'
-size=10*GiB
+size=10*GiB ## size to be added to volume size - increase the volumes size with additional "size"
 #
 def get_vol_cg(box,vol):
 	vol_object = box.volumes.find(name=vol).to_list()
