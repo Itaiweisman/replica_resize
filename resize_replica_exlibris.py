@@ -56,9 +56,10 @@ def get_volumes_to_assign(replica):
 	vol_list=[]
 	pairs={}
 	for dataset in replica.get_field('entity_pairs'):
-		vol_list.append(dataset['remote_entity_id'])
+		vol_list.append(dataset['remote_entity_name'])
 		pairs[dataset['local_entity_id']]=dataset['remote_entity_id']
-	return pairs
+
+	return pairs,vol_list
 
 
 def assign_vols_to_host(remotebox,map_host,vol_dict):
@@ -175,7 +176,7 @@ if __name__ == '__main__':
 			raise Exception("Unable to get Consistency Group Replica")
 		#print replica_json
 		
-		volumes_pairs=get_volumes_to_assign(replica_object)
+		volumes_pairs,target_volume_list=get_volumes_to_assign(replica_object)
 		print "volume pairs are {}, attempt to map".format(volumes_pairs)
 		mapping_host_object=assign_vols_to_host(target_box,map_host,volumes_pairs)
 		print "mapped to {}".format(mapping_host_object.get_name())
