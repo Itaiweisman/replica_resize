@@ -17,9 +17,11 @@ def pass_decode(file):
 def ibox_login(ibox):
 	try:
 		pass_file="."+ibox+".sec"
-		system=InfiniBox(ibox,pass_decode(pass_file))
+		print "Opening {}".format(pass_file)
+		auth=pass_decode(pass_file)
+		system=InfiniBox(ibox,auth)
 		system.login()
-		return system
+		return system,auth
 	except Exception as E:
 		print "failed due to {}".format(E)
 
