@@ -18,7 +18,6 @@ import argparse
 
 IOCTL_BLKGETSIZE64 = 0x80081272
 IOCTL_BLKDISCARD = 0x1277
-#IOCTL_BLKDISCARDZEROES = 0x127c
 
 def get_args():
     """
@@ -107,7 +106,6 @@ def deassign_vols_from_host(box,map_host,vol_dict):
 		logging.info("vol to deassign {}".format(vol))
 		to_remove=box.volumes.find(id=vol)
 		if to_remove:
-			#print "removing {}".format(to_remove[0])
 			logging.info("removing {}".format(to_remove[0]))
 			map_host.unmap_volume(to_remove[0])
 
@@ -204,7 +202,7 @@ def checkvol(volist):
             dev="/dev/mapper/"+volsdict[vol]
             print("starting wipe on {}").format(vol)
             logging.info("starting wipe on {}".format(dev))
-            #callwipe(dev)
+            callwipe(dev)
         else:
             print("Volume {} Not found".format(vol))	
             logging.error("Volume {} Not found".format(vol))	
