@@ -5,15 +5,15 @@ The script requiers the following packages to be installed:
 * gcc
 * python-devel
 
-on fedora distributions this can be installed using: `yum install -y gcc python-devel`
+On fedora distributions this can be done using: `yum install -y gcc python-devel`
 
-the script requiers the following python modules to be installed:
+The script requiers the following python modules to be installed:
 * infinisdk
 * infi.storagemodel
 
-these can be install using `pip install `
+These can be install using `pip install `
 
-it is recommended to install [Infinidat's Host Power Tools](https://repo.infinidat.com/home/main-stable#host-power-tools) on the relevant host and make sure its prepared for volumes to be mapped to it.
+It is recommended to install [Infinidat's Host Power Tools](https://repo.infinidat.com/home/main-stable#host-power-tools) on the relevant host and make sure its prepared for volumes to be mapped to it.
 
 ## Authentication
 Make sure to prepare two credential files, each representing the source and target machines.
@@ -25,7 +25,7 @@ and its content should include:
 
 password should be encrypted using base64
 
-## usage
+## Usage
 ```
 usage: resize_replica_exlibris.py [-h] -s SOURCE_BOX_NAME_OR_FQDN -t
                                   TARGET_BOX_NAME_OR_FQDN -m MAP_HOST -v
