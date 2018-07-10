@@ -12,6 +12,7 @@ import fcntl
 import struct
 import getopt
 import logging
+import time
 from time import strftime
 import argparse
 
@@ -34,7 +35,7 @@ def get_args():
 
 def setup_logger(map_host):
 	file=map_host+"-"+strftime("%Y-%m-%d_%H%M%S")+".log"
-	logging.basicConfig(format='%(asctime)s %(message)s',filename=file,level=logging.INFO)
+	logging.basicConfig(format='%(asctime)s %(message)s',filename=file,level=logging.DEBUG)
 	print ("logfile is {}".format(file))
 	logging.info("Started")
 
@@ -266,7 +267,8 @@ if __name__ == '__main__':
         deassign_vols_from_host(target_box,mapping_host_object,volumes_pairs)
         print "Recreating replication"
         logging.info("Recreating replication")
-        created=replica_create(source_box_name_or_fqdn, source_box_auth, target_box_auth,get_new_replica_json(replica_json))
+        time.sleep(5)
+	created=replica_create(source_box_name_or_fqdn, source_box_auth, target_box_auth,get_new_replica_json(replica_json))
         if (created['error']):
         	logging.error(created['error'])
         	raise Exception(created['error'])
@@ -275,4 +277,3 @@ if __name__ == '__main__':
     except Exception as E:
 		print "Can't {}".format(E)
 		logging.error("Can't {}".format(E))
-
