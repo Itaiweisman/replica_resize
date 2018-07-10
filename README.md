@@ -1,6 +1,3 @@
-# replica_resize
-#readme.md
-
 # replica_resize 
 
 ## Prerequisites
