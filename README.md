@@ -49,7 +49,7 @@ optional arguments:
 
 ```
 ## Example
-`python resize_replica.py -s ibox628 -t ibox1499 -m centos01 -v vol60gx -i 5`
+`python resize_replica_exlibris.py -s ibox628 -t ibox1499 -m centos01 -v vol60gx -i 5`
 
 
 
