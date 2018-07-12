@@ -13,7 +13,7 @@ The script requiers the following python modules to be installed:
 
 These can be install using `pip install `
 
-It is recommended to install [Infinidat's Host Power Tools](https://repo.infinidat.com/home/main-stable#host-power-tools) on the relevant host and make sure its prepared for volumes to be mapped to it.
+please also install  [Infinidat's Host Power Tools](https://repo.infinidat.com/home/main-stable#host-power-tools) on the relevant host and make sure its prepared for volumes to be mapped to it.
 
 ## Authentication
 Make sure to prepare two credential files, each representing the source and target machines.
@@ -25,31 +25,26 @@ and its content should include:
 
 password should be encrypted using base64
 
+## Config File
+please use the attached config file for host and source/target system defintion.
+
+
 ## Usage
 ```
-usage: resize_replica_exlibris.py [-h] -s SOURCE_BOX_NAME_OR_FQDN -t
-                                  TARGET_BOX_NAME_OR_FQDN -m MAP_HOST -v
-                                  VOLUME -i SIZE
+usage: resize_replica.py [-h]  -v VOLUME -i SIZE
 
 Resize a replicated volume that is a member of a cg.
 
 optional arguments:
   -h, --help            show this help message and exit
-  -s SOURCE_BOX_NAME_OR_FQDN, --sourceibox SOURCE_BOX_NAME_OR_FQDN
-                        Source ibox name or FQDN
-  -t TARGET_BOX_NAME_OR_FQDN, --targetibox TARGET_BOX_NAME_OR_FQDN
-                        Target ibox name or FQDN
-  -m MAP_HOST, --maphost MAP_HOST
-                        The host name to map target system volumes to (as
-                        shown in taget system hosts tab)
   -v VOLUME, --volume VOLUME
                         The volume name to resize
   -i SIZE, --increaseby SIZE
-                        Size to be increased by (default in Gib)
+                        Size to be increased by (in Gib)
 
 ```
 ## Example
-`python resize_replica_exlibris.py -s ibox628 -t ibox1499 -m centos01 -v vol60gx -i 5`
+`python resize_replica.py -v vol60gx -i 5`
 
 
 
