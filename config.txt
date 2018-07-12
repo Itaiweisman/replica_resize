@@ -1,0 +1,3 @@
+source_system ibox2
+target_system ibox1
+map_to centos7.localdomain
