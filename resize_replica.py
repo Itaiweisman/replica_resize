@@ -95,7 +95,6 @@ def assign_vols_to_host(remotebox,map_host,vol_dict):
 		remote_vol=remotebox.volumes.find(id=vol).to_list()
 
 		if remote_vol:
-			print "Adding {} to maplist ".format(remote_vol[0])
 			logging.info("Adding {} to maplist ".format(remote_vol[0]))
 			map_list.append(remote_vol[0])
 			pairs[vol]=remote_vol[0].get_id()
@@ -111,11 +110,9 @@ def assign_vols_to_host(remotebox,map_host,vol_dict):
 
 def deassign_vols_from_host(box,map_host,vol_dict):
 	for vol in vol_dict.values():
-		print "vol to deassign {}".format(vol)
 		logging.info("vol to deassign {}".format(vol))
 		to_remove=box.volumes.find(id=vol)
 		if to_remove:
-			print "removing {}".format(to_remove[0])
 			logging.info("removing {}".format(to_remove[0]))
 			map_host.unmap_volume(to_remove[0])
 
