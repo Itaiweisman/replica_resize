@@ -118,11 +118,8 @@ def deassign_vols_from_host(box,map_host,vol_dict):
 
 def resize_volume(sourcebox,remotebox,pairs,vol_to_resize,size):
 	vol=sourcebox.volumes.find(name=volume).to_list()
-	print vol[0].get_id()
 	logging.info(vol[0].get_id())
-	print pairs
 	if vol:
-		print "id is {}".format(pairs[vol[0].get_id()])
 		logging.info("id is {}".format(pairs[vol[0].get_id()]))
 		paired=remotebox.volumes.find(id=pairs[vol[0].get_id()])
 		if paired:
