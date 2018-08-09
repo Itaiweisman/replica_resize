@@ -31,7 +31,8 @@ def get_args():
 
 def args_from_cfgfile():
     conf_file = {}
-    with open("config.txt") as cfg:
+    scriptpath = os.path.dirname(os.path.abspath(__file__))
+    with open(scriptpath+"/config.txt") as cfg:
         for line in cfg:
             (key, val) = line.split()
             conf_file[key] = val
@@ -162,9 +163,9 @@ def get_new_replica_json(old_replica):
 	for item in old_replica['result']['entity_pairs']:
 		new_item={}
 		new_item['local_entity_id']=item['local_entity_id']
-		new_item['remote_base_action']=item['remote_base_action']
+		new_item['remote_base_action']='NO_BASE_DATA'
 		new_item['remote_entity_id']=item['remote_entity_id']
-		new_item['local_base_action']=item['local_base_action']
+		new_item['local_base_action']='NO_BASE_DATA'
 		new_replica['entity_pairs'].append(new_item)
 	return new_replica
 
@@ -285,4 +286,3 @@ if __name__ == '__main__':
     except Exception as E:
 		print "Can't {}".format(E)
 		logging.error("Can't {}".format(E))
-
