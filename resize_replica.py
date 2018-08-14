@@ -219,7 +219,6 @@ if __name__ == '__main__':
     if args.vol is not None:
 	vol=args.vol[0]
         callwipe(args.vol[0])
-	#print(vol)
         exit
     else:
         cfgargs = args_from_cfgfile()
