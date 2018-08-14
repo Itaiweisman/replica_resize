@@ -24,15 +24,16 @@ def get_args():
     Supports the command-line arguments listed below.
     """
     parser = argparse.ArgumentParser(description="Resize a replicated volume that is a member of a cg.")
-    parser.add_argument('-v', '--volume', nargs=1, required=True, help='The volume name to resize', dest='volume', type=str)
-    parser.add_argument('-i', '--increaseby', nargs=1, required=True, help='Size to be increased by (default in Gib)', dest='size', type=int)
+    parser.add_argument('-v', '--volume', nargs=1, required=False, help='The volume name to resize', dest='volume', type=str)
+    parser.add_argument('-i', '--increaseby', nargs=1, required=False, help='Size to be increased by (default in Gib)', dest='size', type=int)
+    parser.add_argument('-d', '--discard', nargs=1, required=False, help='Run discard on specific device', dest='vol', type=str)
     args = parser.parse_args()
     return args
 
 def args_from_cfgfile():
     conf_file = {}
     scriptpath = os.path.dirname(os.path.abspath(__file__))
-    with open(scriptpath+"/config.txt") as cfg:
+    with open(scriptpath+"/config.txt") as cfg:  
         for line in cfg:
             (key, val) = line.split()
             conf_file[key] = val
@@ -215,74 +216,80 @@ def checkvol(volist):
 
 if __name__ == '__main__':
     args = get_args()
-    cfgargs = args_from_cfgfile()
-    source_box_name_or_fqdn=cfgargs['source_system']
-    target_box_name_or_fqdn=cfgargs['target_system']
-    map_host=cfgargs['map_to']
-    volume=args.volume[0]
-    size=(args.size[0])*GiB
-    setup_logger(map_host)
-    try:
-        source_box, source_box_auth=ibox_login(source_box_name_or_fqdn)
-        target_box, target_box_auth=ibox_login(target_box_name_or_fqdn)
-        print "Getting CG Object"
-        logging.info("Getting CG Object")
-        cg_object=get_vol_cg(source_box,volume)
-        if (not cg_object):
-            logging.error("unable to get volume CG")
-            raise Exception("unable to get volume CG")
-        print "CG is {}".format(cg_object.get_name())
-        logging.info("CG is {}".format(cg_object.get_name()))
-        print "Getting CG ID"
-        logging.info("Getting CG ID")
-        cg_id=cg_object.get_id()
-        print "Getting Replica"
-        logging.info("Getting Replica")
-        replica_object, replica_json=get_cg_replica(source_box,source_box_name_or_fqdn, source_box_auth, cg_id)
-        print "Replica ID is {}".format(replica_object.get_id())
-        logging.info("Replica ID is {}".format(replica_object.get_id()))
-        if (not replica_object or replica_json['error']):	
-        	logging.error("Unable to get Consistency Group Replica")
-        	raise Exception("Unable to get Consistency Group Replica")
-
-        volumes_pairs,target_volume_list=get_volumes_to_assign(replica_object)
-        print "volume pairs are {}, attempt to map".format(volumes_pairs)
-        logging.info("volume pairs are {}, attempt to map".format(volumes_pairs))
-        print "volume target are {}".format(target_volume_list)
-        logging.info("volume target are {}".format(target_volume_list))
-        mapping_host_object=assign_vols_to_host(target_box,map_host,volumes_pairs)
-        print "mapped to {}".format(mapping_host_object.get_name())
-        logging.info("mapped to {}".format(mapping_host_object.get_name()))
-        if (not mapping_host_object):
-        	logging.error("Unable to assign volumes to mount host")
-        	raise Exception("Unable to assign volumes to mount host")
-
-        print "Breaking the replication Link"
-        logging.info("Breaking the replication Link")
-        broken=replica_break(source_box_name_or_fqdn, source_box_auth, target_box_auth, replica_object)
-        if broken['error']:
-        	raise Exception(broken['error'])
-        print "Replication is broken"
-        logging.info("Replication is broken")
-        infirescan()
-        vlist()
-        checkvol(target_volume_list)
-        print "resizing volume "
-        logging.info("resizing volume ")
-        resize_volume(source_box,target_box,volumes_pairs,volume,size)
-        print "removing volumes from host"
-        logging.info("removing volumes from host")
-        deassign_vols_from_host(target_box,mapping_host_object,volumes_pairs)
-        print "Recreating replication"
-        logging.info("Recreating replication")
-        new_rep=get_new_replica_json(replica_json)
-        time.sleep(3)
-        created=replica_create(source_box_name_or_fqdn, source_box_auth, target_box_auth,new_rep)
-        if (created['error']):
-        	logging.error(created['error'])
-        	raise Exception(created['error'])
-        print "Created. Done"
-        logging.info("Created. Done")
-    except Exception as E:
-		print "Can't {}".format(E)
-		logging.error("Can't {}".format(E))
+    if args.vol is not None:
+	vol=args.vol[0]
+        callwipe(args.vol[0])
+	#print(vol)
+        exit
+    else:
+        cfgargs = args_from_cfgfile()
+        source_box_name_or_fqdn=cfgargs['source_system']
+        target_box_name_or_fqdn=cfgargs['target_system']
+        map_host=cfgargs['map_to']
+        volume=args.volume[0]
+        size=(args.size[0])*GiB
+        setup_logger(map_host)
+        try:
+            source_box, source_box_auth=ibox_login(source_box_name_or_fqdn)
+            target_box, target_box_auth=ibox_login(target_box_name_or_fqdn)
+            print "Getting CG Object"
+            logging.info("Getting CG Object")
+            cg_object=get_vol_cg(source_box,volume)
+            if (not cg_object):
+                logging.error("unable to get volume CG")
+                raise Exception("unable to get volume CG")
+	    print "CG is {}".format(cg_object.get_name())
+	    logging.info("CG is {}".format(cg_object.get_name()))
+	    print "Getting CG ID"
+	    logging.info("Getting CG ID")
+	    cg_id=cg_object.get_id()
+	    print "Getting Replica"
+	    logging.info("Getting Replica")
+	    replica_object, replica_json=get_cg_replica(source_box,source_box_name_or_fqdn, source_box_auth, cg_id)
+	    print "Replica ID is {}".format(replica_object.get_id())
+	    logging.info("Replica ID is {}".format(replica_object.get_id()))
+	    if (not replica_object or replica_json['error']):	
+	       	logging.error("Unable to get Consistency Group Replica")
+	       	raise Exception("Unable to get Consistency Group Replica")
+	
+	    volumes_pairs,target_volume_list=get_volumes_to_assign(replica_object)
+	    print "volume pairs are {}, attempt to map".format(volumes_pairs)
+	    logging.info("volume pairs are {}, attempt to map".format(volumes_pairs))
+	    print "volume target are {}".format(target_volume_list)
+	    logging.info("volume target are {}".format(target_volume_list))
+	    mapping_host_object=assign_vols_to_host(target_box,map_host,volumes_pairs)
+	    print "mapped to {}".format(mapping_host_object.get_name())
+	    logging.info("mapped to {}".format(mapping_host_object.get_name()))
+	    if (not mapping_host_object):
+	       	logging.error("Unable to assign volumes to mount host")
+	       	raise Exception("Unable to assign volumes to mount host")
+	
+	    print "Breaking the replication Link"
+	    logging.info("Breaking the replication Link")
+	    broken=replica_break(source_box_name_or_fqdn, source_box_auth, target_box_auth, replica_object)
+	    if broken['error']:
+	       	raise Exception(broken['error'])
+	    print "Replication is broken"
+	    logging.info("Replication is broken")
+	    infirescan()
+	    vlist()
+	    checkvol(target_volume_list)
+	    print "resizing volume "
+	    logging.info("resizing volume ")
+	    resize_volume(source_box,target_box,volumes_pairs,volume,size)
+	    print "removing volumes from host"
+	    logging.info("removing volumes from host")
+	    deassign_vols_from_host(target_box,mapping_host_object,volumes_pairs)
+	    print "Recreating replication"
+	    logging.info("Recreating replication")
+	    new_rep=get_new_replica_json(replica_json)
+	    time.sleep(3)
+	    created=replica_create(source_box_name_or_fqdn, source_box_auth, target_box_auth,new_rep)
+	    if (created['error']):
+	       	logging.error(created['error'])
+	       	raise Exception(created['error'])
+	    print "Created. Done"
+	    logging.info("Created. Done")
+        except Exception as E:
+            print "Can't {}".format(E)
+            logging.error("Can't {}".format(E))
